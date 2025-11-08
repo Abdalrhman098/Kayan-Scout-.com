@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>كيان الكشفية البحرية – رحلة البحث عن الكنز</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #1a1200, #0a2a4a);
+      color: #fff;
+      min-height: 100vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    
+    .bg-pattern {
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 105, 148, 0.1) 0%, transparent 50%);
+      z-index: -1;
+    }
+    
+    .kayan-logo {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      color: #d4af37;
+      font-weight: bold;
+      font-size: 1.2em;
+      z-index: 100;
+    }
+
+    /* كل الصفحات مركزة */
+    .page {
+      display: none; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center;
+      min-height: 100vh; 
+      padding: 20px; 
+      text-align: center; 
+      position: relative; 
+      z-index: 1;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .active { display: flex !important; }
+
+    h1 { 
+      font-size: 2em; 
+      margin: 15px 0; 
+      color: #d4af37;
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+    
+    h2 {
+      color: #d4af37;
+      margin: 10px 0;
+    }
+
+    input, button, textarea, select {
+      width: 100%; 
+      max-width: 400px; 
+      padding: 12px; 
+      margin: 10px 0; 
+      border-radius: 12px; 
+      font-size: 1.1em;
+      border: 1px solid #d4af37;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    
+    button {
+      background: #005f73; 
+      color: #fff; 
+      border: none; 
+      cursor: pointer; 
+      transition: 0.3s; 
+      font-weight: bold;
+    }
+    
+    button:hover { 
+      background: #00bcd4; 
+      transform: scale(1.05); 
+    }
+    
+    button.success {
+      background: #28a745;
+    }
+    
+    button.danger {
+      background: #dc3545;
+    }
+    
+    button.warning {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .clue { 
+      background: rgba(255,255,255,0.1); 
+      padding: 15px; 
+      border-radius: 12px; 
+      margin: 15px 0; 
+      width: 100%; 
+      max-width: 500px; 
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    
+    .file-name { 
+      color: #d4af37; 
+      font-weight: bold; 
+      margin: 8px 0; 
+    }
+
+    #map { 
+      width: 100%; 
+      max-width: 500px; 
+      height: 300px; 
+      margin: 15px 0; 
+      border-radius: 15px; 
+      display: none; 
+    }
+
+    /* إيموجي متحركة */
+    .emoji-bg {
+      position: fixed; 
+      font-size: 2.5em; 
+      animation: floatEmoji 12s infinite linear; 
+      pointer-events: none; 
+      z-index: 0;
+    }
+    
+    @keyframes floatEmoji {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+    }
+
+    .loader {
+      border: 10px solid rgba(255,255,255,0.1); 
+      border-top: 10px solid #d4af37; 
+      border-radius: 50%;
+      width: 70px; 
+      height: 70px; 
+      animation: spin 1s linear infinite; 
+      margin: 20px auto;
+    }
+    
+    @keyframes spin { 
+      0% { transform: rotate(0deg); } 
+      100% { transform: rotate(360deg); } 
+    }
+
+    .pop { animation: pop 1s; }
+    
+    @keyframes pop { 
+      0% { transform: scale(0.3); opacity: 0; } 
+      100% { transform: scale(1); opacity: 1; } 
+    }
+
+    #winScreen { 
+      background: linear-gradient(45deg, #d4af37, #b8941f); 
+      color: #000; 
+    }
+    
+    #winScreen h1 { 
+      color: #000; 
+      text-shadow: 0 0 10px gold; 
+    }
+
+    .team-item { 
+      background: rgba(0,0,0,0.3); 
+      padding: 10px; 
+      margin: 5px 0; 
+      border-radius: 10px; 
+      display: flex; 
+      justify-content: space-between; 
+      max-width: 500px; 
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .hidden { display: none; }
+
+    /* صورة الجواب للكشاف */
+    #clueImg { 
+      max-width: 70%; 
+      border-radius: 15px; 
+      margin: 15px 0; 
+      border: 2px solid #d4af37;
+    }
+
+    /* زر رجوع */
+    .back-btn { 
+      background: #777; 
+      margin-top: 20px; 
+    }
+    
+    .back-btn:hover { 
+      background: #555; 
+    }
+
+    /* نافذة تفاصيل الرحلة */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: #1a1200;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 90%;
+      width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 2px solid #d4af37;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* كاميرا QR */
+    #qr-scanner {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px 0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    #qr-result {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+
+    /* شعارات التحميل */
+    .loading-logo {
+      width: 120px;
+      height: 120px;
+      margin: 20px auto;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 50%;
+      background-color: rgba(255,255,255,0.1);
+      border: 2px solid #d4af37;
+    }
+    
+    .scout-logo {
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23d4af37"/><text x="50" y="60" font-family="Arial" font-size="30" text-anchor="middle" fill="%231a1200">🧭</text></svg>');
+    }
+    
+    .admin-logo {
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23005f73"/><text x="50" y="60" font-family="Arial" font-size="30" text-anchor="middle" fill="%23ffffff">👑</text></svg>');
+    }
+    
+    .points-display {
+      font-size: 1.2em;
+      color: #d4af37;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    
+    .team-waiting {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      max-width: 400px;
+      width: 100%;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      z-index: 1001;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      animation: slideIn 0.5s ease;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .ranking-table {
+      width: 100%;
+      max-width: 500px;
+      margin: 15px 0;
+      border-collapse: collapse;
+    }
+    
+    .ranking-table th, .ranking-table td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    
+    .ranking-table th {
+      background: rgba(212, 175, 55, 0.2);
+      color: #d4af37;
+    }
+    
+    .ranking-table tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Pattern -->
+  <div class="bg-pattern"></div>
+  
+  <!-- شعار كيان -->
+  <div class="kayan-logo">#بنبني كيان</div>
+
+  <!-- Floating Emojis (بدون كلمات) -->
+  <div class="emoji-bg" style="left:10%; animation-delay:0s;">🏕️</div>
+  <div class="emoji-bg" style="left:25%; animation-delay:2s;">🗺️</div>
+  <div class="emoji-bg" style="left:40%; animation-delay:4s;">🔥</div>
+  <div class="emoji-bg" style="left:55%; animation-delay:6s;">🏆</div>
+  <div class="emoji-bg" style="left:70%; animation-delay:8s;">🎉</div>
+  <div class="emoji-bg" style="left:85%; animation-delay:10s;">🧭</div>
+
+  <!-- Loading Page -->
+  <div id="loading" class="page active">
+    <h1 class="pop">مجموعة كيان الكشفية البحرية</h1>
+    <div class="loading-logo scout-logo"></div>
+    <div class="loader"></div>
+    <p style="font-size:1.4em;">جاري التحميل...</p>
+    <audio id="loadingAudio" loop></audio>
+  </div>
+
+  <!-- Role Selection -->
+  <div id="role" class="page">
+    <h1>اختر دورك</h1>
+    <button onclick="transitionTo('userEntry')">الكشاف (الفريق)</button>
+    <button onclick="transitionTo('adminLogin')">القائد (الإدمن)</button>
+  </div>
+
+  <!-- Admin Login -->
+  <div id="adminLogin" class="page">
+    <h1>دخول القائد</h1>
+    <div class="loading-logo admin-logo"></div>
+    <input type="password" id="adminPass" placeholder="كلمة المرور (2017)" />
+    <button onclick="adminLogin()">دخول</button>
+    <p id="adminError" style="color:gold;"></p>
+    <button class="back-btn" onclick="goBack('role')">رجوع</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="page">
+    <h1>لوحة تحكم القائد</h1>
+    <button onclick="transitionTo('createTrip')">إنشاء رحلة جديدة</button>
+    <button onclick="showHistory()">سجل الرحلات القديمة</button>
+    <button onclick="showTracking()">تتبع الرحلات الجارية</button>
+    <button class="back-btn" onclick="goBack('adminLogin')">رجوع</button>
+  </div>
+
+  <!-- Create Trip -->
+  <div id="createTrip" class="page">
+    <h1>إنشاء رحلة جديدة</h1>
+    <input type="text" id="tripName" placeholder="اسم الرحلة" />
+    <div id="clues"></div>
+    <button onclick="addClue()">إضافة جواب</button>
+    <button onclick="saveTrip()">حفظ وإنشاء كود</button>
+    <div id="tripCode" style="font-size:2em; color:gold; margin:20px;"></div>
+    <button class="back-btn" onclick="goBack('adminPanel')">رجوع</button>
+  </div>
+
+  <!-- History -->
+  <div id="history" class="page">
+    <h1>سجل الرحلات القديمة</h1>
+    <div id="historyList" style="width:100%; max-width:500px;"></div>
+    <button class="back-btn" onclick="goBack('adminPanel')">رجوع</button>
+  </div>
+
+  <!-- Tracking -->
+  <div id="tracking" class="page">
+    <h1>تتبع الرحلات الجارية</h1>
+    <div id="liveTrips" style="width:100%; max-width:500px;"></div>
+    <button class="back-btn" onclick="goBack('adminPanel')">رجوع</button>
+  </div>
+
+  <!-- User Entry -->
+  <div id="userEntry" class="page">
+    <h1 class="pop">مجموعة كيان الكشفية البحرية</h1>
+    <div class="loading-logo scout-logo"></div>
+    <p class="pop" style="animation-delay:0.8s;">مرحبًا بك في رحلة البحث عن الكنز!</p>
+    <input type="text" id="userCode" placeholder="أدخل كود الرحلة" />
+    <button onclick="checkJourneyCode()">استمرار</button>
+    <button class="back-btn" onclick="goBack('role')">رجوع</button>
+  </div>
+
+  <!-- Team Registration -->
+  <div id="teamRegistration" class="page">
+    <h1 id="journeyTitle">انضمام للرحلة</h1>
+    <p>أدخل اسم فريقك:</p>
+    <input type="text" id="teamName" placeholder="اسم الفريق" />
+    <button onclick="sendJoinRequest()">إرسال طلب الانضمام</button>
+    <button class="back-btn" onclick="goBack('userEntry')">رجوع</button>
+  </div>
+
+  <!-- Team Waiting -->
+  <div id="teamWaiting" class="page">
+    <h1>انتظار الموافقة</h1>
+    <div class="team-waiting">
+      <p>تم إرسال طلب الانضمام للقائد</p>
+      <p>جاري انتظار الموافقة...</p>
+      <div class="loader"></div>
+    </div>
+    <button class="back-btn" onclick="goBack('teamRegistration')">إلغاء</button>
+  </div>
+
+  <!-- Team Welcome -->
+  <div id="teamWelcome" class="page">
+    <h1 id="welcomeTeamName">مرحبًا يا فريق!</h1>
+    <p>استعدوا لرحلة البحث عن الكنز!</p>
+    <div class="loader"></div>
+  </div>
+
+  <!-- User Trip -->
+  <div id="userTrip" class="page">
+    <h2 id="currentClueTitle">الجواب الحالي</h2>
+    <img id="clueImg" />
+    <div class="points-display">النقاط: <span id="currentPoints">0</span></div>
+    
+    <div id="mapSection" style="display:none; width:100%; max-width:500px;">
+      <h3>الخريطة</h3>
+      <input type="password" id="mapPassword" placeholder="باسورد الخريطة" />
+      <button onclick="showMap()">عرض الخريطة</button>
+      <div id="mapImageContainer"></div>
+    </div>
+    
+    <div id="transitionSection" style="display:none; width:100%; max-width:500px;">
+      <h3>الانتقال للجواب التالي</h3>
+      <input type="password" id="transitionPassword" placeholder="باسورد الانتقال" />
+      <button onclick="checkTransitionPassword()">انتقال</button>
+      <button id="qrButton" style="display:none;" onclick="scanQR()">مسح QR</button>
+    </div>
+    
+    <div id="completionSection" style="display:none; width:100%; max-width:500px;">
+      <h3>إنهاء الرحلة</h3>
+      <input type="password" id="completionPassword" placeholder="باسورد الانتهاء" />
+      <button onclick="checkCompletionPassword()">إنهاء الرحلة</button>
+    </div>
+    
+    <p id="userStatus" style="margin:15px; font-weight:bold;"></p>
+    <p id="timerDisplay">الوقت: <span id="timer">00:00</span></p>
+  </div>
+
+  <!-- Win Screen -->
+  <div id="winScreen" class="page">
+    <h1>تهانينا أيها الكشاف! 🎉🎖️🔥</h1>
+    <h2>لقد وصلت إلى الكنز بنجاح!</h2>
+    <p>أنت أول فريق يصل إلى نهاية الرحلة</p>
+    <p>الوقت المستغرق: <span id="victoryTime">00:00</span></p>
+    <p>إجمالي النقاط: <span id="victoryPoints">0</span></p>
+    <audio id="winAudio" autoplay loop></audio>
+  </div>
+
+  <!-- Journey Ended -->
+  <div id="journeyEnded" class="page">
+    <h1>انتهت الرحلة!</h1>
+    <p id="winnerMessage">الفريق [الاسم] فاز أولًا في [الوقت]</p>
+    <h3>الترتيب النهائي</h3>
+    <div id="finalRanking"></div>
+  </div>
+
+  <!-- Modal for Trip Details -->
+  <div id="tripDetailsModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeModal()">✕</button>
+      <h2 id="modalTripName">تفاصيل الرحلة</h2>
+      <div id="modalTripDetails"></div>
+    </div>
+  </div>
+  
+  <!-- Modal for Join Requests -->
+  <div id="joinRequestModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeJoinRequestModal()">✕</button>
+      <h2>طلب انضمام جديد</h2>
+      <p id="joinRequestMessage">طلب انضمام جديد من الفريق [الاسم]</p>
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="success" onclick="acceptTeam()">✅ قبول</button>
+        <button class="danger" onclick="rejectTeam()">❌ رفض</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for QR Scanner -->
+  <div id="qrModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeQRModal()">✕</button>
+      <h2>مسح رمز QR</h2>
+      <div style="text-align: center;">
+        <p>ضع رمز QR أمام الكاميرا</p>
+        <div id="qrScannerContainer" style="width: 100%; height: 300px; margin: 20px 0;"></div>
+        <button onclick="simulateQRScan()">محاكاة المسح (للاختبار)</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for Final Ranking -->
+  <div id="finalRankingModal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal" onclick="closeFinalRankingModal()">✕</button>
+      <h2>الترتيب النهائي</h2>
+      <div id="finalRankingContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // === Global Variables ===
+    let currentPage = 'loading';
+    let trips = JSON.parse(localStorage.getItem('kayanTrips') || '[]');
+    let activeTrip = null;
+    let currentTeam = null;
+    let currentClueIndex = 0;
+    let teamPoints = 0;
+    let startTime = null;
+    let timerInterval = null;
+    let qrScanner = null;
+    let pendingJoinRequest = null;
+
+    // === Transition with Animation ===
+    function transitionTo(page) {
+      document.getElementById(currentPage).classList.remove('active');
+      currentPage = page;
+      document.getElementById(page).classList.add('active');
+      
+      // تشغيل صوت الانتقال إذا كان متوفراً
+      if (page === 'userTrip') updateTripStatus();
+    }
+
+    // === Direct Back (No Loading) ===
+    function goBack(page) {
+      document.getElementById(currentPage).classList.remove('active');
+      document.getElementById(page).classList.add('active');
+      currentPage = page;
+    }
+
+    // === Loading Screen (5s) ===
+    setTimeout(() => transitionTo('role'), 5000);
+
+    // === Admin Login ===
+    function adminLogin() {
+      if (document.getElementById('adminPass').value === '2017') {
+        transitionTo('adminPanel');
+      } else {
+        document.getElementById('adminError').innerText = 'كلمة مرور خاطئة!';
+      }
+    }
+
+    // === Create Trip ===
+    let clueId = 0;
+    function addClue() {
+      clueId++;
+      const div = document.createElement('div');
+      div.className = 'clue';
+      div.innerHTML = `
+        <h3>الجواب ${clueId}</h3>
+        <input type="file" accept="image/*" class="clueImage" onchange="showFileName(this, 'clueFile${clueId}')">
+        <p id="clueFile${clueId}" class="file-name">لم يتم اختيار صورة الجواب</p>
+        <input type="file" accept="image/*" class="mapImage" onchange="showFileName(this, 'mapFile${clueId}')">
+        <p id="mapFile${clueId}" class="file-name">لم يتم اختيار صورة الخريطة</p>
+        <input type="password" placeholder="باسورد الخريطة" class="mapPassword">
+        <select class="transitionType">
+          <option value="password">باسورد</option>
+          <option value="qr">QR Code</option>
+        </select>
+        <input type="password" placeholder="باسورد الانتقال" class="transitionPassword">
+        <button class="danger" onclick="this.parentElement.remove()">حذف هذا الجواب</button>
+      `;
+      document.getElementById('clues').appendChild(div);
+    }
+
+    function showFileName(input, id) {
+      const name = input.files[0]?.name || 'لم يتم اختيار صورة';
+      document.getElementById(id).innerText = name;
+    }
+
+    function saveTrip() {
+      const tripName = document.getElementById('tripName').value;
+      if (!tripName) {
+        alert('يرجى إدخال اسم الرحلة');
+        return;
+      }
+
+      const trip = {
+        id: 'TR-' + Math.random().toString(36).substr(2, 4).toUpperCase(),
+        name: tripName,
+        clues: [],
+        active: true,
+        finished: false,
+        teams: [],
+        joinRequests: [],
+        createdAt: new Date().toISOString()
+      };
+
+      const clues = document.querySelectorAll('.clue');
+      let loaded = 0;
+      
+      if (clues.length === 0) {
+        alert('يجب إضافة جواب واحد على الأقل');
+        return;
+      }
+      
+      clues.forEach((c, index) => {
+        const clueImageInput = c.querySelector('.clueImage');
+        const mapImageInput = c.querySelector('.mapImage');
+        const clueFile = clueImageInput.files[0];
+        const mapFile = mapImageInput.files[0];
+        
+        if (!clueFile || !mapFile) {
+          alert('يجب اختيار صورة الجواب وصورة الخريطة لكل جواب');
+          return;
+        }
+        
+        const clueReader = new FileReader();
+        clueReader.onload = e => {
+          const mapReader = new FileReader();
+          mapReader.onload = e2 => {
+            const isLastClue = index === clues.length - 1;
+            
+            trip.clues.push({
+              clueImage: e.target.result,
+              mapImage: e2.target.result,
+              mapPassword: c.querySelector('.mapPassword').value,
+              transitionType: c.querySelector('.transitionType').value,
+              transitionPassword: c.querySelector('.transitionPassword').value,
+              isLastClue: isLastClue
+            });
+            
+            if (++loaded === clues.length) finalizeTrip(trip);
+          };
+          mapReader.readAsDataURL(mapFile);
+        };
+        clueReader.readAsDataURL(clueFile);
+      });
+    }
+
+    function finalizeTrip(trip) {
+      trips.push(trip);
+      localStorage.setItem('kayanTrips', JSON.stringify(trips));
+      document.getElementById('tripCode').innerHTML = `
+        <p style="font-size:2.5em; color:gold;">${trip.id}</p>
+        <p>شارك الكود مع الفرق!</p>
+      `;
+      
+      // إظهار رسالة توضيحية
+      alert(`تم إنشاء الرحلة بنجاح! كود الرحلة هو: ${trip.id}. شارك هذا الكود مع المشاركين.`);
+      
+      // تشغيل صوت النجاح
+      playSuccessSound();
+    }
+
+    function playSuccessSound() {
+      // في التطبيق الحقيقي، سيتم تشغيل صوت النجاح
+      console.log("تشغيل صوت النجاح");
+    }
+
+    // === History & Tracking ===
+    function showHistory() {
+      updateTrips();
+      const list = document.getElementById('historyList');
+      const finishedTrips = trips.filter(t => !t.active);
+      
+      if (finishedTrips.length === 0) {
+        list.innerHTML = '<p>لا توجد رحلات منتهية</p>';
+      } else {
+        list.innerHTML = finishedTrips.map(t => `
+          <div class="clue">
+            <p><strong>${t.name}</strong></p>
+            <p>الكود: ${t.id}</p>
+            <p>تاريخ الإنشاء: ${new Date(t.createdAt).toLocaleDateString('ar-EG')}</p>
+            <p>عدد الفرق: ${t.teams ? t.teams.length : 0}</p>
+          </div>
+        `).join('');
+      }
+      transitionTo('history');
+    }
+
+    function showTracking() {
+      updateTrips();
+      const container = document.getElementById('liveTrips');
+      const activeTrips = trips.filter(t => t.active);
+      
+      if (activeTrips.length === 0) {
+        container.innerHTML = '<p>لا توجد رحلات جارية</p>';
+      } else {
+        container.innerHTML = activeTrips.map(t => `
+          <div class="clue">
+            <p><strong>${t.name}</strong> (${t.id})</p>
+            <p>عدد الفرق: ${t.teams ? t.teams.length : 0}</p>
+            <p>طلبات الانضمام: ${t.joinRequests ? t.joinRequests.length : 0}</p>
+            <button onclick="showTripDetails('${t.id}')" style="background:#00bcd4; margin:5px;">تفاصيل</button>
+            <button onclick="closeTrip('${t.id}')" style="background:#dc3545; margin:5px;">إغلاق الرحلة</button>
+          </div>
+        `).join('');
+      }
+      transitionTo('tracking');
+    }
+
+    function showTripDetails(tripId) {
+      const trip = trips.find(t => t.id === tripId);
+      if (!trip) return;
+      
+      document.getElementById('modalTripName').innerText = `تفاصيل رحلة: ${trip.name}`;
+      
+      let detailsHTML = `
+        <p><strong>كود الرحلة:</strong> ${trip.id}</p>
+        <p><strong>الحالة:</strong> ${trip.active ? 'جارية' : 'منتهية'}</p>
+        <p><strong>عدد الفرق:</strong> ${trip.teams ? trip.teams.length : 0}</p>
+        <h3>الفرق المشاركة:</h3>
+      `;
+      
+      if (trip.teams && trip.teams.length > 0) {
+        trip.teams.forEach((team, i) => {
+          detailsHTML += `
+            <div class="team-item">
+              <div>
+                <span>${team.name}</span><br>
+                <small>المرحلة: ${team.currentClue + 1} | النقاط: ${team.points || 0}</small>
+              </div>
+              <div>
+                <button class="danger" onclick="removeTeam('${tripId}', ${i})">❌ إيقاف</button>
+                <button class="warning" onclick="pauseTeam('${tripId}', ${i})">⏸️ إيقاف مؤقت</button>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        detailsHTML += '<p>لا يوجد فرق مشاركة</p>';
+      }
+      
+      detailsHTML += `
+        <h3>طلبات الانضمام:</h3>
+      `;
+      
+      if (trip.joinRequests && trip.joinRequests.length > 0) {
+        trip.joinRequests.forEach((request, i) => {
+          detailsHTML += `
+            <div class="team-item">
+              <span>${request.teamName}</span>
+              <div>
+                <button class="success" onclick="acceptJoinRequest('${tripId}', ${i})">✅ قبول</button>
+                <button class="danger" onclick="rejectJoinRequest('${tripId}', ${i})">❌ رفض</button>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        detailsHTML += '<p>لا توجد طلبات انضمام</p>';
+      }
+      
+      detailsHTML += `
+        <div style="margin-top: 20px; text-align: center;">
+          <button class="danger" onclick="closeTrip('${tripId}')">🛑 إيقاف الرحلة نهائيًا</button>
+          <button class="warning" onclick="pauseTrip('${tripId}')">🔒 إيقاف مؤقتًا</button>
+        </div>
+      `;
+      
+      document.getElementById('modalTripDetails').innerHTML = detailsHTML;
+      document.getElementById('tripDetailsModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('tripDetailsModal').style.display = 'none';
+    }
+
+    function removeTeam(tripId, teamIndex) {
+      const trip = trips.find(t => t.id === tripId);
+      if (trip && trip.teams) {
+        trip.teams.splice(teamIndex, 1);
+        localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        showTripDetails(tripId);
+      }
+    }
+
+    function pauseTeam(tripId, teamIndex) {
+      const trip = trips.find(t => t.id === tripId);
+      if (trip && trip.teams) {
+        trip.teams[teamIndex].paused = !trip.teams[teamIndex].paused;
+        localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        showTripDetails(tripId);
+      }
+    }
+
+    function closeTrip(tripId) {
+      const trip = trips.find(t => t.id === tripId);
+      if (trip) {
+        trip.active = false;
+        localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        
+        // عرض الترتيب النهائي
+        showFinalRanking(trip);
+        
+        showTracking();
+      }
+    }
+
+    function pauseTrip(tripId) {
+      const trip = trips.find(t => t.id === tripId);
+      if (trip) {
+        trip.paused = !trip.paused;
+        localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        showTripDetails(tripId);
+      }
+    }
+
+    function acceptJoinRequest(tripId, requestIndex) {
+      const trip = trips.find(t => t.id === tripId);
+      if (trip && trip.joinRequests) {
+        const request = trip.joinRequests[requestIndex];
+        
+        // إضافة الفريق للرحلة
+        if (!trip.teams) trip.teams = [];
+        trip.teams.push({
+          id: Date.now().toString(),
+          name: request.teamName,
+          currentClue: 0,
+          points: 0,
+          startTime: new Date().toISOString(),
+          status: 'active'
+        });
+        
+        // إزالة الطلب من قائمة الطلبات
+        trip.joinRequests.splice(requestIndex, 1);
+        localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        
+        // إشعار الفريق بالقبول (سيتم معالجته عند تحديث الصفحة)
+        showTripDetails(tripId);
+      }
+    }
+
+    function rejectJoinRequest(tripId, requestIndex) {
+      const trip = trips.find(t => t.id === tripId);
+      if (trip && trip.joinRequests) {
+        trip.joinRequests.splice(requestIndex, 1);
+        localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        showTripDetails(tripId);
+      }
+    }
+
+    function showFinalRanking(trip) {
+      if (!trip.teams || trip.teams.length === 0) return;
+      
+      // ترتيب الفرق حسب النقاط
+      const sortedTeams = [...trip.teams].sort((a, b) => (b.points || 0) - (a.points || 0));
+      
+      let rankingHTML = `
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>الترتيب</th>
+              <th>اسم الفريق</th>
+              <th>النقاط</th>
+              <th>المرحلة</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      sortedTeams.forEach((team, index) => {
+        rankingHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${team.name}</td>
+            <td>${team.points || 0}</td>
+            <td>${team.currentClue + 1}</td>
+          </tr>
+        `;
+      });
+      
+      rankingHTML += `</tbody></table>`;
+      
+      document.getElementById('finalRankingContent').innerHTML = rankingHTML;
+      document.getElementById('finalRankingModal').style.display = 'flex';
+      
+      // إشعار القائد بالفائز
+      if (sortedTeams.length > 0) {
+        const winner = sortedTeams[0];
+        showNotification(`الفريق ${winner.name} فاز في الرحلة ${trip.name}!`);
+      }
+    }
+
+    function closeFinalRankingModal() {
+      document.getElementById('finalRankingModal').style.display = 'none';
+    }
+
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 5000);
+    }
+
+    // === User Trip ===
+    function checkJourneyCode() {
+      const code = document.getElementById('userCode').value.trim().toUpperCase();
+      updateTrips();
+      activeTrip = trips.find(t => t.id === code && t.active);
+      
+      if (!activeTrip) {
+        alert('كود غير صحيح أو الرحلة منتهية');
+        return;
+      }
+      
+      document.getElementById('journeyTitle').textContent = `انضمام لرحلة: ${activeTrip.name}`;
+      transitionTo('teamRegistration');
+    }
+
+    function sendJoinRequest() {
+      const teamName = document.getElementById('teamName').value.trim();
+      
+      if (!teamName) {
+        alert('يرجى إدخال اسم الفريق');
+        return;
+      }
+      
+      // إضافة طلب الانضمام للرحلة
+      if (!activeTrip.joinRequests) activeTrip.joinRequests = [];
+      activeTrip.joinRequests.push({
+        teamName: teamName,
+        time: new Date().toISOString()
+      });
+      
+      localStorage.setItem('kayanTrips', JSON.stringify(trips));
+      
+      // الانتقال لصفحة الانتظار
+      transitionTo('teamWaiting');
+      
+      // محاكاة إرسال إشعار للقائد
+      setTimeout(() => {
+        // في التطبيق الحقيقي، سيتم إشعار القائد
+        showJoinRequestNotification(teamName);
+      }, 1000);
+    }
+
+    function showJoinRequestNotification(teamName) {
+      // في التطبيق الحقيقي، سيتم عرض إشعار للقائد
+      // هنا سنحاكي الموافقة التلقائية بعد 3 ثوانٍ للاختبار
+      setTimeout(() => {
+        acceptTeamAutomatically(teamName);
+      }, 3000);
+    }
+
+    function acceptTeamAutomatically(teamName) {
+      // البحث عن الطلب في الرحلة النشطة
+      if (activeTrip && activeTrip.joinRequests) {
+        const requestIndex = activeTrip.joinRequests.findIndex(req => req.teamName === teamName);
+        if (requestIndex !== -1) {
+          // إضافة الفريق للرحلة
+          if (!activeTrip.teams) activeTrip.teams = [];
+          currentTeam = {
+            id: Date.now().toString(),
+            name: teamName,
+            currentClue: 0,
+            points: 0,
+            startTime: new Date().toISOString(),
+            status: 'active'
+          };
+          activeTrip.teams.push(currentTeam);
+          
+          // إزالة الطلب من قائمة الطلبات
+          activeTrip.joinRequests.splice(requestIndex, 1);
+          localStorage.setItem('kayanTrips', JSON.stringify(trips));
+          
+          // الانتقال لصفحة الترحيب
+          document.getElementById('welcomeTeamName').textContent = `مرحبًا يا فريق ${teamName}!`;
+          transitionTo('teamWelcome');
+          
+          // بدء الرحلة بعد ثانيتين
+          setTimeout(() => {
+            startJourney();
+          }, 2000);
+        }
+      }
+    }
+
+    function startJourney() {
+      startTime = new Date();
+      teamPoints = 0;
+      currentClueIndex = 0;
+      startTimer();
+      loadCurrentClue();
+      transitionTo('userTrip');
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      if (!startTime) return;
+      
+      const now = new Date();
+      const diff = Math.floor((now - startTime) / 1000);
+      const minutes = Math.floor(diff / 60);
+      const seconds = diff % 60;
+      
+      document.getElementById('timer').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function updateTrips() {
+      trips = JSON.parse(localStorage.getItem('kayanTrips') || '[]');
+    }
+
+    function loadCurrentClue() {
+      if (!activeTrip || currentClueIndex >= activeTrip.clues.length) {
+        endJourney();
+        return;
+      }
+      
+      const clue = activeTrip.clues[currentClueIndex];
+      
+      document.getElementById('currentClueTitle').textContent = `الجواب ${currentClueIndex + 1}`;
+      document.getElementById('clueImg').src = clue.clueImage;
+      document.getElementById('currentPoints').textContent = Math.round(teamPoints);
+      
+      // إظهار قسم الخريطة
+      document.getElementById('mapSection').style.display = 'block';
+      document.getElementById('mapImageContainer').innerHTML = '';
+      
+      // إخفاء أقسام الانتقال والإنهاء
+      document.getElementById('transitionSection').style.display = 'none';
+      document.getElementById('completionSection').style.display = 'none';
+      
+      // إعداد المؤقت لعرض خيار الانتقال بعد دقيقة
+      setTimeout(() => {
+        if (!clue.isLastClue) {
+          // ليس الجواب الأخير - عرض خيار الانتقال
+          document.getElementById('transitionSection').style.display = 'block';
+          
+          if (clue.transitionType === 'qr') {
+            document.getElementById('transitionPassword').style.display = 'none';
+            document.getElementById('qrButton').style.display = 'inline-block';
+          } else {
+            document.getElementById('transitionPassword').style.display = 'block';
+            document.getElementById('qrButton').style.display = 'none';
+          }
+        } else {
+          // الجواب الأخير - عرض خيار الإنهاء
+          document.getElementById('completionSection').style.display = 'block';
+        }
+      }, 60000); // بعد دقيقة واحدة
+    }
+
+    function showMap() {
+      const mapPassword = document.getElementById('mapPassword').value;
+      const clue = activeTrip.clues[currentClueIndex];
+      
+      if (mapPassword === clue.mapPassword) {
+        document.getElementById('mapImageContainer').innerHTML = 
+          `<img src="${clue.mapImage}" alt="صورة الخريطة" style="max-width: 100%; border-radius: 5px;">`;
+        playSuccessSound();
+      } else {
+        alert('باسورد الخريطة غير صحيح');
+      }
+    }
+
+    function checkTransitionPassword() {
+      const transitionPassword = document.getElementById('transitionPassword').value;
+      const clue = activeTrip.clues[currentClueIndex];
+      
+      if (transitionPassword === clue.transitionPassword) {
+        // حساب النقاط
+        const now = new Date();
+        const diff = Math.floor((now - startTime) / 1000);
+        const points = Math.max(0, 100 - (diff * 0.5));
+        teamPoints += points;
+        
+        document.getElementById('currentPoints').textContent = Math.round(teamPoints);
+        
+        // تحديث نقاط الفريق في التخزين
+        if (currentTeam) {
+          currentTeam.points = teamPoints;
+          currentTeam.currentClue = currentClueIndex + 1;
+          localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        }
+        
+        // الانتقال للجواب التالي
+        currentClueIndex++;
+        loadCurrentClue();
+        playSuccessSound();
+      } else {
+        document.getElementById('userStatus').innerText = 'باسورد الانتقال غير صحيح!';
+      }
+    }
+
+    function scanQR() {
+      document.getElementById('qrModal').style.display = 'flex';
+    }
+
+    function closeQRModal() {
+      document.getElementById('qrModal').style.display = 'none';
+    }
+
+    function simulateQRScan() {
+      closeQRModal();
+      
+      // محاكاة مسح QR ناجح
+      const clue = activeTrip.clues[currentClueIndex];
+      document.getElementById('transitionPassword').value = clue.transitionPassword;
+      checkTransitionPassword();
+    }
+
+    function checkCompletionPassword() {
+      const completionPassword = document.getElementById('completionPassword').value;
+      const clue = activeTrip.clues[currentClueIndex];
+      
+      if (completionPassword === clue.transitionPassword) {
+        // حساب النقاط النهائية
+        const now = new Date();
+        const diff = Math.floor((now - startTime) / 1000);
+        const points = Math.max(0, 100 - (diff * 0.5));
+        teamPoints += points;
+        
+        document.getElementById('victoryPoints').textContent = Math.round(teamPoints);
+        document.getElementById('victoryTime').textContent = document.getElementById('timer').textContent;
+        
+        // تحديث حالة الفريق
+        if (currentTeam) {
+          currentTeam.points = teamPoints;
+          currentTeam.endTime = new Date().toISOString();
+          currentTeam.status = 'completed';
+          localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        }
+        
+        // إغلاق الرحلة
+        activeTrip.active = false;
+        activeTrip.finished = true;
+        localStorage.setItem('kayanTrips', JSON.stringify(trips));
+        
+        // عرض صفحة الفوز
+        transitionTo('winScreen');
+        
+        // تشغيل صوت الفوز
+        playVictorySound();
+      } else {
+        alert('باسورد الانتهاء غير صحيح');
+      }
+    }
+
+    function playVictorySound() {
+      // في التطبيق الحقيقي، سيتم تشغيل صوت الفوز
+      console.log("تشغيل موسيقى الفوز");
+    }
+
+    function endJourney() {
+      // في التطبيق الحقيقي، سيتم عرض رسالة انتهاء الرحلة
+      alert("انتهت الرحلة! سيتم عرض النتائج قريبًا");
+    }
+
+    function updateTripStatus() {
+      // تحديث حالة الرحلة كل 3 ثوانٍ
+      setInterval(() => {
+        if (currentPage === 'userTrip' && activeTrip) {
+          updateTrips();
+          const updatedTrip = trips.find(t => t.id === activeTrip.id);
+          if (updatedTrip && !updatedTrip.active) {
+            // عرض صفحة انتهاء الرحلة
+            const winner = updatedTrip.teams ? updatedTrip.teams.find(t => t.status === 'completed') : null;
+            if (winner) {
+              document.getElementById('winnerMessage').textContent = 
+                `الفريق ${winner.name} فاز أولًا في ${winner.endTime ? new Date(winner.endTime).toLocaleTimeString() : 'الوقت'}`;
+            }
+            transitionTo('journeyEnded');
+          }
+        }
+      }, 3000);
+    }
+
+    // === Initialize ===
+    document.addEventListener('DOMContentLoaded', function() {
+      // أي تهيئة إضافية يمكن إضافتها هنا
+    });
+  </script>
+</body>
+</html>
